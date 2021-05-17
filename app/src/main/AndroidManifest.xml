@@ -9,8 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageTOPdf">
-        <activity android:name=".SignUpActivity"></activity>
-        <activity android:name=".UI.WelcomeActivity">
+        <activity android:name=".UI.ActivityNewPassword"></activity>
+        <activity android:name=".UI.ActivityForgotPassword" />
+        <activity android:name=".UI.ActivityLetsStart" />
+        <activity android:name=".UI.ActivityVerification" />
+        <activity android:name=".UI.ActivityLogin" />
+        <activity android:name=".ActivitySignUp" />
+        <activity android:name=".UI.ActivityWelcome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

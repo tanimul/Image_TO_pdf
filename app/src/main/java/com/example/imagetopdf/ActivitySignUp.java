@@ -2,13 +2,15 @@ package com.example.imagetopdf;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.imagetopdf.UI.ActivityLogin;
 import com.example.imagetopdf.databinding.ActivitySignUpBinding;
 
-public class SignUpActivity extends AppCompatActivity {
-    private static final String TAG = "Activity_Welcome";
+public class ActivitySignUp extends AppCompatActivity {
+    private static final String TAG = "ActivitySignUp";
     private ActivitySignUpBinding activitySignUpBinding;
 
     @Override
@@ -27,7 +29,8 @@ public class SignUpActivity extends AppCompatActivity {
         activitySignUpBinding.textviewSingupLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+               startActivity(new Intent(ActivitySignUp.this, ActivityLogin.class));
+               finish();
             }
         });
     }
