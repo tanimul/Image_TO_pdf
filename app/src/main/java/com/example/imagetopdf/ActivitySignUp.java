@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.imagetopdf.UI.ActivityLogin;
+import com.example.imagetopdf.UI.ActivityVerification;
 import com.example.imagetopdf.databinding.ActivitySignUpBinding;
 
 public class ActivitySignUp extends AppCompatActivity {
@@ -31,6 +32,14 @@ public class ActivitySignUp extends AppCompatActivity {
             public void onClick(View v) {
                startActivity(new Intent(ActivitySignUp.this, ActivityLogin.class));
                finish();
+            }
+        });
+
+        activitySignUpBinding.buttonRegisteredSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivitySignUp.this, ActivityVerification.class));
+                finish();
             }
         });
     }

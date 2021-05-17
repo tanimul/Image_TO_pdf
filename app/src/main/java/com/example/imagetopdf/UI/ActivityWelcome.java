@@ -25,5 +25,12 @@ public class ActivityWelcome extends AppCompatActivity {
                 startActivity(new Intent(ActivityWelcome.this, ActivitySignUp.class));
             }
         });
+
+        activityWelcomeBinding.buttonMainLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityWelcome.this, ActivityLogin.class));
+            }
+        });
     }
 }

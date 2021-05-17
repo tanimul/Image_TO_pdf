@@ -27,5 +27,21 @@ public class ActivityLogin extends AppCompatActivity {
             }
         });
 
+        activityLoginBinding.textviewLoginSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityLogin.this, ActivitySignUp.class));
+                finish();
+            }
+        });
+
+        activityLoginBinding.textviewLoginForgotpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityLogin.this, ActivityForgotPassword.class));
+                finish();
+            }
+        });
+
     }
 }
