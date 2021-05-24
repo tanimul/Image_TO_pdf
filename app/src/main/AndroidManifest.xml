@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageTOPdf">
-        <activity android:name=".UI.ActivityNewPassword"></activity>
+        <activity android:name=".UI.ActivityTrash"></activity>
+        <activity android:name=".UI.ActivitySetting" />
+        <activity android:name=".UI.ActivityHome" />
+        <activity android:name=".UI.ActivityNewPassword" />
         <activity android:name=".UI.ActivityForgotPassword" />
         <activity android:name=".UI.ActivityLetsStart" />
         <activity android:name=".UI.ActivityVerification" />
