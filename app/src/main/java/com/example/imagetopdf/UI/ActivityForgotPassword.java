@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.imagetopdf.ActivitySignUp;
 import com.example.imagetopdf.databinding.ActivityForgotPasswordBinding;
 
 public class ActivityForgotPassword extends AppCompatActivity {

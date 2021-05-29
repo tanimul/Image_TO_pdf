@@ -140,7 +140,8 @@
         android:orientation="horizontal"
         android:weightSum="5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass">
+        app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass"
+        >
 
         <ImageView
             android:id="@+id/imageview_login_google"

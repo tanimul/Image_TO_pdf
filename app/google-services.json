@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "192602982267",
+    "project_id": "image-to-pdf-eb290",
+    "storage_bucket": "image-to-pdf-eb290.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192602982267:android:03f39620b8ac3dab581fde",
+        "android_client_info": {
+          "package_name": "com.example.imagetopdf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192602982267-3lbagmh6oom5qbr5o94jhtpcmb4vcok3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.imagetopdf",
+            "certificate_hash": "328b91dec8038cb1840af8b049eaf78e8cf02e04"
+          }
+        },
+        {
+          "client_id": "192602982267-et202j96u5sjh3dp9r4c243cg87f0nss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYNLqs0fCGT9oL1hz3Y_bohveMj8-gwYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "192602982267-et202j96u5sjh3dp9r4c243cg87f0nss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

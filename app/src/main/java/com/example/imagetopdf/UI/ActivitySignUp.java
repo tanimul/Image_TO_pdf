@@ -1,4 +1,4 @@
-package com.example.imagetopdf;
+package com.example.imagetopdf.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.imagetopdf.UI.ActivityLogin;
-import com.example.imagetopdf.UI.ActivityVerification;
 import com.example.imagetopdf.databinding.ActivitySignUpBinding;
 
 public class ActivitySignUp extends AppCompatActivity {
@@ -42,6 +40,9 @@ public class ActivitySignUp extends AppCompatActivity {
                 finish();
             }
         });
+        
+
+
 
 
     }
