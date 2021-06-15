@@ -11,8 +11,15 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.imagetopdf.KEYS;
 import com.example.imagetopdf.ModelClass.ModelUser;
+import com.example.imagetopdf.Tools;
 import com.example.imagetopdf.databinding.ActivityLoginBinding;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -30,6 +37,8 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     ProgressDialog Dialog;
+    GoogleSignInClient mGoogleSignInClient;
+    int RC_SIGN_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,15 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         activityLoginBinding.buttonLoginSignin.setOnClickListener(this);
         activityLoginBinding.textviewLoginSignup.setOnClickListener(this);
         activityLoginBinding.textviewLoginForgotpass.setOnClickListener(this);
+        activityLoginBinding.imageviewLoginGoogle.setOnClickListener(this);
+
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
 
     @Override
@@ -66,6 +84,31 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
         if (v == activityLoginBinding.textviewLoginSignup) {
             startActivity(new Intent(ActivityLogin.this, ActivitySignUp.class));
             finish();
+        }
+        if (v == activityLoginBinding.imageviewLoginGoogle) {
+            Log.d(TAG, "Google Login Clicked.");
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+                Log.d(TAG, "firebaseAuthWithGoogle:" + account.getEmail());
+                //firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+            }
         }
     }
 
@@ -98,6 +141,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                             if (firebaseAuth.getCurrentUser().isEmailVerified()) {
                                 Log.d(TAG, "Login Successfully.");
                                 Toast.makeText(ActivityLogin.this, "Login Successfully", Toast.LENGTH_SHORT).show();
+                                Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, true);
                             } else {
                                 Log.d(TAG, "Please Verify your Email address.");
                                 Toast.makeText(ActivityLogin.this, "Please Verify your Email address", Toast.LENGTH_SHORT).show();

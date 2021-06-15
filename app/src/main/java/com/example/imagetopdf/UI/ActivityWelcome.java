@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.imagetopdf.KEYS;
+import com.example.imagetopdf.Tools;
 import com.example.imagetopdf.databinding.ActivityWelcomeBinding;
 
 import io.andref.rx.network.RxNetwork;
@@ -25,6 +27,14 @@ public class ActivityWelcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         activityWelcomeBinding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         setContentView(activityWelcomeBinding.getRoot());
+
+
+        if (Tools.getPrefBoolean(KEYS.IS_LOGGED_IN, false)) {
+            Intent intent = new Intent(ActivityWelcome.this, ActivityHome.class);
+            startActivity(intent);
+            finish();
+        }
+
 
         activityWelcomeBinding.textviewMainRegistration.setOnClickListener(new View.OnClickListener() {
             @Override

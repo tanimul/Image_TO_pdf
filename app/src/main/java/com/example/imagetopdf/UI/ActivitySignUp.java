@@ -16,9 +16,12 @@ import android.widget.Toast;
 import com.example.imagetopdf.ModelClass.ModelUser;
 import com.example.imagetopdf.databinding.ActivitySignUpBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,6 +53,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
         activitySignUpBinding.textviewSingupLogin.setOnClickListener(this);
         activitySignUpBinding.buttonRegisteredSignup.setOnClickListener(this);
 
+
     }
 
     @Override
@@ -68,6 +72,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                 checkUserStatus();
             } else {
                 Log.d(TAG, "Validation UnSuccessful!!");
+                Dialog.dismiss();
                 // Toast.makeText(ActivitySignUp.this, "Please fill the all Information!!", Toast.LENGTH_SHORT).show();
             }
 //                startActivity(new Intent(ActivitySignUp.this, ActivityVerification.class));
@@ -133,57 +138,61 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
 
     private void checkUserStatus() {
         Log.d(TAG, "Check User.");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        firebaseAuth.fetchSignInMethodsForEmail(userEmail).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        ModelUser modelUser = dataSnapshot.getValue(ModelUser.class);
-                        if (!modelUser.getUserEmail().equals(userEmail)) {
-                            Log.d(TAG, "New User.");
-                            userRegistration();
-                        } else {
-                            Log.d(TAG, "Existing User.");
-                            Toast.makeText(ActivitySignUp.this, "Already Registered", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+            public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                boolean check = !task.getResult().getSignInMethods().isEmpty();
+                Log.d(TAG, "Already Signed in or not: " + check);
+                if (check) {
+                    Log.d(TAG, " Registered Email.");
+                    isVerifiedEmail();
                 } else {
-                    Log.d(TAG, "Null Database Reference .");
+                    Log.d(TAG, "Not Registered Email.");
                     userRegistration();
                 }
+
             }
 
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onFailure(@NonNull Exception e) {
                 Dialog.dismiss();
-                Toast.makeText(ActivitySignUp.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Database error. " + error.getMessage());
+                Log.d(TAG, "Fetch sign in Method On failure: " + e.getMessage());
             }
         });
+
+
+    }
+
+    private void isVerifiedEmail() {
+///Todo Verified EMail or not
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d(TAG, "Email Verified or Not. " + currentFirebaseUser.getEmail());
+
     }
 
     private void userRegistration() {
 
-        String key = databaseReference.getKey();
+        String key = databaseReference.push().getKey();
+        Log.d(TAG, "Key: " + key);
 
-        databaseReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        ModelUser modelUser = new ModelUser(userEmail, userName);
+        databaseReference.child(key).setValue(modelUser).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ModelUser modelUser = new ModelUser(userName, userEmail);
-                databaseReference.setValue(modelUser);
-                Log.d(TAG, "New User added in Firebase Real time Database.");
-//                Toast.makeText(ActivitySignUp.this, "User Added Successfully", Toast.LENGTH_SHORT).show();
-                sendEmailVerification();
-            }
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //    Toast.makeText(ActivitySignUp.this, "User value added successfully.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "User value added successfully. ");
+                    sendEmailVerification();
+                } else {
+                    Dialog.dismiss();
+                    Toast.makeText(ActivitySignUp.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Database error. " + task.getException());
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Dialog.dismiss();
-                Toast.makeText(ActivitySignUp.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Database error. " + error.getMessage());
             }
         });
-
 
     }
 

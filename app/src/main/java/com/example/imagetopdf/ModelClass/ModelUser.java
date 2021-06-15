@@ -3,9 +3,9 @@ package com.example.imagetopdf.ModelClass;
 public class ModelUser {
     private String userName, userEmail;
 
-    public ModelUser(String userName, String userEmail) {
-        this.userName = userName;
+    public ModelUser(String userEmail,String userName) {
         this.userEmail = userEmail;
+        this.userName = userName;
     }
 
     public ModelUser() {
