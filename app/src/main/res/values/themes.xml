@@ -13,4 +13,10 @@
         <item name="android:statusBarColor" tools:targetApi="l">@color/ash</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/teal_200</item>
+        <item name="hintTextColor">@color/dartash</item>
+        <item name="boxStrokeWidth">2dp</item>
+    </style>
 </resources>

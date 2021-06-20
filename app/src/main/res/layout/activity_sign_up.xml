@@ -58,50 +58,92 @@
         android:paddingLeft="10dp"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/edittext_registered_password"
+        app:layout_constraintBottom_toTopOf="@id/textinputlayout_registered_password"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_registered_username" />
 
-    <EditText
-        android:id="@+id/edittext_registered_password"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textinputlayout_registered_password"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/rect_background2"
-        android:drawableEnd="@drawable/ic_eye_visible"
         android:hint="Password"
-        android:inputType="numberPassword"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/edittext_registered_confirmpassword"
+        app:endIconMode="password_toggle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_registered_email" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_registered_email">
 
-    <EditText
-        android:id="@+id/edittext_registered_confirmpassword"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edittext_registered_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <EditText-->
+<!--        android:id="@+id/edittext_registered_password"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:background="@drawable/rect_background2"-->
+<!--        android:drawableEnd="@drawable/ic_eye_visible"-->
+<!--        android:hint="Password"-->
+<!--        android:inputType="numberPassword"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/edittext_registered_confirmpassword"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/edittext_registered_email" />-->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textinputlayout_registered_con_password"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/rect_background2"
-        android:drawableRight="@drawable/ic_eye_visible"
         android:hint="Confirm Password"
-        android:inputType="numberPassword"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/button_registered_signup"
+        app:endIconMode="password_toggle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_registered_password" />
+        app:layout_constraintTop_toBottomOf="@+id/textinputlayout_registered_password">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edittext_registered_confirmpassword"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+<!--    <EditText-->
+<!--        android:id="@+id/edittext_registered_confirmpassword"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:layout_marginTop="15dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:background="@drawable/rect_background2"-->
+<!--        android:drawableRight="@drawable/ic_eye_visible"-->
+<!--        android:hint="Confirm Password"-->
+<!--        android:inputType="numberPassword"-->
+<!--        android:paddingLeft="10dp"-->
+<!--        android:paddingRight="10dp"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/button_registered_signup"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/textinputlayout_registered_password" />-->
 
     <Button
         android:id="@+id/button_registered_signup"
@@ -120,7 +162,7 @@
         app:backgroundTint="@null"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_registered_confirmpassword" />
+        app:layout_constraintTop_toBottomOf="@+id/textinputlayout_registered_con_password" />
 
     <TextView
         android:id="@+id/textview_singup_login"

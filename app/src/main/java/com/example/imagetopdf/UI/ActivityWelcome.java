@@ -30,11 +30,10 @@ public class ActivityWelcome extends AppCompatActivity {
 
 
         if (Tools.getPrefBoolean(KEYS.IS_LOGGED_IN, false)) {
-            Intent intent = new Intent(ActivityWelcome.this, ActivityHome.class);
-            startActivity(intent);
+            Log.d(TAG, "Logged In");
+            startActivity(new Intent(ActivityWelcome.this, ActivityHome.class));
             finish();
         }
-
 
         activityWelcomeBinding.textviewMainRegistration.setOnClickListener(new View.OnClickListener() {
             @Override

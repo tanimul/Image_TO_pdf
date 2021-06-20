@@ -10,6 +10,7 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -53,7 +54,6 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
         activitySignUpBinding.textviewSingupLogin.setOnClickListener(this);
         activitySignUpBinding.buttonRegisteredSignup.setOnClickListener(this);
 
-
     }
 
     @Override
@@ -75,11 +75,9 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                 Dialog.dismiss();
                 // Toast.makeText(ActivitySignUp.this, "Please fill the all Information!!", Toast.LENGTH_SHORT).show();
             }
-//                startActivity(new Intent(ActivitySignUp.this, ActivityVerification.class));
-//                finish();
         }
-
     }
+
 
     public boolean userRegistrationValidation() {
         userName = activitySignUpBinding.edittextRegisteredUsername.getText().toString();
@@ -97,7 +95,6 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
             activitySignUpBinding.edittextRegisteredEmail.requestFocus();
             return false;
         }
-
         if (userPassword.isEmpty()) {
             activitySignUpBinding.edittextRegisteredPassword.setError("Enter Your Password please");
             activitySignUpBinding.edittextRegisteredPassword.requestFocus();
@@ -146,10 +143,10 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                 Log.d(TAG, "Already Signed in or not: " + check);
                 if (check) {
                     Log.d(TAG, " Registered Email.");
-                    isVerifiedEmail();
+                    Toast.makeText(ActivitySignUp.this, "Already Registered Email", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "Not Registered Email.");
-                    userRegistration();
+                    sendEmailVerification();
                 }
 
             }
@@ -165,39 +162,7 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void isVerifiedEmail() {
-///Todo Verified EMail or not
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.d(TAG, "Email Verified or Not. " + currentFirebaseUser.getEmail());
-
-    }
-
-    private void userRegistration() {
-
-        String key = databaseReference.push().getKey();
-        Log.d(TAG, "Key: " + key);
-
-        ModelUser modelUser = new ModelUser(userEmail, userName);
-        databaseReference.child(key).setValue(modelUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    //    Toast.makeText(ActivitySignUp.this, "User value added successfully.", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "User value added successfully. ");
-                    sendEmailVerification();
-                } else {
-                    Dialog.dismiss();
-                    Toast.makeText(ActivitySignUp.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Database error. " + task.getException());
-                }
-
-            }
-        });
-
-    }
-
     private void sendEmailVerification() {
-
         firebaseAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -207,13 +172,10 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                             firebaseAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    userRegistration(firebaseAuth.getCurrentUser().getUid());
                                     Toast.makeText(ActivitySignUp.this, "Verification link sent to Your Email.", Toast.LENGTH_SHORT).show();
                                     Log.d(TAG, "Verification link sent.");
-                                    startActivity(new Intent(ActivitySignUp.this, ActivityLogin.class));
-                                    finish();
                                 }
-
-
                             });
                         } else {
                             Dialog.dismiss();
@@ -221,6 +183,34 @@ public class ActivitySignUp extends AppCompatActivity implements View.OnClickLis
                             Log.d(TAG, "Something is wrong. " + task.getException());
                         }
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Dialog.dismiss();
+                Log.d(TAG, "Something is wrong. " + e.getMessage());
+            }
+        });
+    }
+
+    private void userRegistration(String uid) {
+        Log.d(TAG, "User ID: " + uid);
+
+        ModelUser modelUser = new ModelUser(userEmail, userName);
+        databaseReference.child(uid).setValue(modelUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //    Toast.makeText(ActivitySignUp.this, "User value added successfully.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "User value added successfully. ");
+                    startActivity(new Intent(ActivitySignUp.this, ActivityLogin.class));
+                    finish();
+                } else {
+                    Dialog.dismiss();
+                    Toast.makeText(ActivitySignUp.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Database error. " + task.getException());
+                }
+
+            }
+        });
     }
 }

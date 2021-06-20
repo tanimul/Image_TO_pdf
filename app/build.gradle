@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.imagetopdf"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -51,5 +51,6 @@ dependencies {
 
     implementation 'io.andref:Rx.Network:1.0.1'
 
+    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
 
 }

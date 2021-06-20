@@ -44,24 +44,45 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageview_login" />
 
-    <EditText
-        android:id="@+id/edittext_login_password"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textinputlayout_login_password"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/rect_background2"
-        android:drawableEnd="@drawable/ic_eye_visible"
         android:hint="Password"
-        android:inputType="numberPassword"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
+        app:endIconMode="password_toggle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_login_email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edittext_login_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/edittext_login_password"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_marginLeft="10dp"-->
+    <!--        android:layout_marginTop="15dp"-->
+    <!--        android:layout_marginRight="10dp"-->
+    <!--        android:background="@drawable/rect_background2"-->
+    <!--        android:drawableEnd="@drawable/ic_eye_visible"-->
+    <!--        android:hint="Password"-->
+    <!--        android:inputType="numberPassword"-->
+    <!--        android:paddingLeft="10dp"-->
+    <!--        android:paddingRight="10dp"-->
+    <!--        android:textColor="@color/black"-->
+    <!--        android:textSize="20sp"-->
+    <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--        app:layout_constraintRight_toRightOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />-->
 
     <CheckBox
         android:id="@+id/checkbox_login_checkRemember"
@@ -72,7 +93,7 @@
         android:layout_marginRight="10dp"
         android:buttonTint="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/edittext_login_password" />
+        app:layout_constraintTop_toBottomOf="@id/textinputlayout_login_password" />
 
     <TextView
         android:id="@+id/textview_login_rememberme"
@@ -85,7 +106,7 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/checkbox_login_checkRemember"
-        app:layout_constraintTop_toBottomOf="@id/edittext_login_password" />
+        app:layout_constraintTop_toBottomOf="@id/textinputlayout_login_password" />
 
     <Button
         android:id="@+id/button_login_signin"
@@ -136,22 +157,21 @@
         android:id="@+id/linerlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass"
-        >
+        app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass">
 
         <ImageView
             android:id="@+id/imageview_login_google"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="50dp"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:background="@null"
             android:src="@drawable/search"
-            android:layout_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />
 
@@ -160,10 +180,9 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
+            android:layout_weight="1"
             android:background="@null"
             android:src="@drawable/facebook"
-            android:layout_weight="1"
             app:layout_constraintStart_toEndOf="@id/imageview_login_google"
             app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />
 
@@ -172,36 +191,34 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
+            android:layout_weight="1"
             android:background="@null"
             android:src="@drawable/twitter"
-            android:layout_weight="1"
             app:layout_constraintStart_toEndOf="@id/imageview_login_facebook"
             app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />
 
-        <ImageView
-            android:id="@+id/imageview_login_linkedin"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
-            android:background="@null"
-            android:src="@drawable/linkedin"
-            android:layout_weight="1"
-            app:layout_constraintStart_toEndOf="@id/imageview_login_twitter"
-            app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />
+        <!--        <ImageView-->
+        <!--            android:id="@+id/imageview_login_linkedin"-->
+        <!--            android:layout_width="50dp"-->
+        <!--            android:layout_height="50dp"-->
+        <!--            android:layout_marginStart="10dp"-->
+        <!--            android:layout_marginTop="50dp"-->
+        <!--            android:layout_weight="1"-->
+        <!--            android:background="@null"-->
+        <!--            android:src="@drawable/linkedin"-->
+        <!--            app:layout_constraintStart_toEndOf="@id/imageview_login_twitter"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />-->
 
         <ImageView
             android:id="@+id/imageview_login_github"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
             android:layout_marginEnd="10dp"
+            android:layout_weight="1"
             android:background="@null"
             android:src="@drawable/github"
-            android:layout_weight="1"
-            app:layout_constraintStart_toEndOf="@id/imageview_login_linkedin"
+            app:layout_constraintStart_toEndOf="@id/imageview_login_twitter"
             app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass" />
     </LinearLayout>
 
