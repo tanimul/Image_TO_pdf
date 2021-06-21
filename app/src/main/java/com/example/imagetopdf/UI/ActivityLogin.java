@@ -169,7 +169,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                         Log.d(TAG, "Unchecked.");
                         Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, false);
                     }
-                    startActivity(new Intent(ActivityLogin.this, ActivityHome.class));
+                    startActivity(new Intent(ActivityLogin.this, ActivityLetsStart.class));
                     finish();
                 }
             }
@@ -242,7 +242,7 @@ public class ActivityLogin extends AppCompatActivity implements View.OnClickList
                     Log.d(TAG, "adding successfully in Database.");
                     Tools.savePref(KEYS.USER_NAME, personname);
                     Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, true);
-                    startActivity(new Intent(ActivityLogin.this, ActivityHome.class));
+                    startActivity(new Intent(ActivityLogin.this, ActivityLetsStart.class));
                     finish();
                 }
 

@@ -18,4 +18,11 @@
         android:id="@+id/select"
         android:icon="@drawable/ic_select"
         android:title="Select" />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"
+        android:title="Search" />
 </menu>

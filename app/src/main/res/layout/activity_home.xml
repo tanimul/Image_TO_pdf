@@ -24,15 +24,107 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_margin="30dp"
-            android:layout_marginStart="316dp"
-            android:layout_marginLeft="316dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@null"
+            android:elevation="0dp"
             android:src="@drawable/add"
+            app:backgroundTint="@android:color/transparent"
+            app:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/extflotingbutton_takeimage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:outlineProvider="none"
+            android:text="Take the Image"
+            android:visibility="invisible"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/camera"
+            app:iconGravity="end"
+            app:layout_constraintBottom_toTopOf="@id/flotingbutton_home_add"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/extflotingbutton_home_importfromgalary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:outlineProvider="none"
+            android:text="Import from Galary"
+            android:visibility="invisible"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/imports"
+            app:iconGravity="end"
+            app:layout_constraintBottom_toTopOf="@id/extflotingbutton_takeimage"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/extflotingbutton_home_newfolder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:outlineProvider="none"
+            android:text="Create new Folder"
+            android:visibility="invisible"
+            app:backgroundTint="@android:color/transparent"
+            app:icon="@drawable/folder"
+            app:iconGravity="end"
+            app:layout_constraintBottom_toTopOf="@id/extflotingbutton_home_importfromgalary"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="100dp" />
+
+        <!--click here to view previous image-->
+        <Button
+            android:id="@+id/previous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            android:text="Previous" />
+
+        <!--click here to view next image-->
+        <Button
+            android:id="@+id/next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Next"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/previous"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview_Image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:listitem="@layout/layout_image"
+            android:layout_marginTop="100dp"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
