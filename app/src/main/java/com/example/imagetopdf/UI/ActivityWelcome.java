@@ -32,7 +32,6 @@ public class ActivityWelcome extends AppCompatActivity {
         if (Tools.getPrefBoolean(KEYS.IS_LOGGED_IN, false)) {
             Log.d(TAG, "Logged In");
             startActivity(new Intent(ActivityWelcome.this, ActivityHome.class));
-            finish();
         }
 
         activityWelcomeBinding.textviewMainRegistration.setOnClickListener(new View.OnClickListener() {

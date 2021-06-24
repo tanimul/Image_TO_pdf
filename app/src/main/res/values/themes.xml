@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.ImageTOPdf" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/teal_700</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -18,5 +18,9 @@
         <item name="boxStrokeColor">@color/teal_200</item>
         <item name="hintTextColor">@color/dartash</item>
         <item name="boxStrokeWidth">2dp</item>
+    </style>
+    <style name="Floating" parent="Widget.Design.FloatingActionButton">
+        <!---rest of your style-->
+        <item name="android:foreground">@drawable/ic_add</item>
     </style>
 </resources>

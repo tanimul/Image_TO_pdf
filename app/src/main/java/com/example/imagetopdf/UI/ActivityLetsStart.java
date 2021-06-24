@@ -7,16 +7,15 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.imagetopdf.ProgressBarAnimation;
-import com.example.imagetopdf.databinding.ActivityLetsStartBinding;
 
 public class ActivityLetsStart extends AppCompatActivity {
     private static final String TAG = "ActivityLetsStart";
-    private ActivityLetsStartBinding activityLetsStartBinding;
+    private com.example.imagetopdf.databinding.ActivityLetsStartBinding activityLetsStartBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityLetsStartBinding = ActivityLetsStartBinding.inflate(getLayoutInflater());
+        activityLetsStartBinding = com.example.imagetopdf.databinding.ActivityLetsStartBinding.inflate(getLayoutInflater());
         setContentView(activityLetsStartBinding.getRoot());
 
 
@@ -35,8 +34,11 @@ public class ActivityLetsStart extends AppCompatActivity {
 
     private void progressBarAnimation() {
         ProgressBarAnimation progressBarAnimation = new ProgressBarAnimation(this
+                , activityLetsStartBinding.textviewLetstartComplete
                 , activityLetsStartBinding.textviewLetstartPercentage
+                ,activityLetsStartBinding.buttonLetstart
                 , activityLetsStartBinding.progressbarLetsstart, 0f, 100f);
+        progressBarAnimation.setDuration(5000);
         activityLetsStartBinding.progressbarLetsstart.setAnimation(progressBarAnimation);
     }
 }

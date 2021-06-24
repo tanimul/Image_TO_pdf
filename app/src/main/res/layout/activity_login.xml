@@ -160,7 +160,7 @@
         android:layout_marginTop="70dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="5"
+        android:weightSum="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_login_forgotpass">
 

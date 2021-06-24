@@ -32,13 +32,15 @@
 
     <ProgressBar
         android:id="@+id/progressbar_letsstart"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="30dp"
-        android:layout_weight="1"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_letsstart_thanks" />
@@ -47,12 +49,13 @@
         android:id="@+id/textview_letstart_complete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="12dp"
         android:text="Almost Complete:  "
         android:textColor="@color/black"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.425"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progressbar_letsstart" />
 
@@ -79,6 +82,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="LET'S START"
+        android:visibility="invisible"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"

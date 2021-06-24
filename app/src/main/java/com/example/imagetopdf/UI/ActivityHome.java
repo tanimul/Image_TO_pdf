@@ -4,15 +4,20 @@ import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +31,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,12 +39,14 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.example.imagetopdf.Adapter.AdapterImageList;
+import com.example.imagetopdf.App;
 import com.example.imagetopdf.KEYS;
 import com.example.imagetopdf.R;
 import com.example.imagetopdf.Tools;
@@ -67,11 +75,16 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
     Animation fav_open, fav_close, rotate_clockwise, rotate_anticlockwise;
     boolean isOpen = false;
     private int image_rec_code = 1;
-    private Uri filepath_uri;
     Bitmap bitmap;
     ArrayList<Uri> mArrayUri;
+    Uri uri;
     int position = 0;
     private AdapterImageList adapterImageList;
+    static final int REQUEST_IMAGE_CAPTURE = 0;
+    private long backpressed;
+    private Toast backtost;
+    private AlertDialog dialog;
+    private EditText editTextfilename;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,50 +95,145 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         initHeader();
         initNavAndToolbar();
         initAnimation();
+        initAleartDialog();
 
 
         mArrayUri = new ArrayList<Uri>();
 
         activityHomeBinding.recyclerviewImage.setFitsSystemWindows(true);
-        activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
+        //  activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
+        activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
+
         adapterImageList = new AdapterImageList(mArrayUri);
         activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
 
-
-        // click here to select next image
-        activityHomeBinding.next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (position < mArrayUri.size() - 1) {
-                    // increase the position by 1
-                    position++;
-                    activityHomeBinding.image.setImageURI(mArrayUri.get(position));
-                    getDropboxIMGSize(mArrayUri.get(position));
-                } else {
-                    Toast.makeText(ActivityHome.this, "Last Image Already Shown", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // click here to view previous image
-        activityHomeBinding.previous.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (position > 0) {
-                    // decrease the position by 1
-                    position--;
-                    activityHomeBinding.image.setImageURI(mArrayUri.get(position));
-                    getDropboxIMGSize(mArrayUri.get(position));
-                }
-            }
-        });
-
+        activityHomeBinding.navViewActivityHome.getMenu().getItem(0).setChecked(true);
 
         activityHomeBinding.flotingbuttonHomeAdd.setOnClickListener(this);
         activityHomeBinding.extflotingbuttonTakeimage.setOnClickListener(this);
         activityHomeBinding.extflotingbuttonHomeImportfromgalary.setOnClickListener(this);
         activityHomeBinding.extflotingbuttonHomeNewfolder.setOnClickListener(this);
         activityHomeBinding.navViewActivityHome.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == activityHomeBinding.flotingbuttonHomeAdd) {
+            extendFloatingButton();
+        }
+        if (v == activityHomeBinding.extflotingbuttonTakeimage) {
+            Log.d(TAG, "Take Image .");
+            extendFloatingButton();
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            try {
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            } catch (ActivityNotFoundException e) {
+                // display error state to the user
+                Log.d(TAG, "display error state to the user");
+            }
+        }
+        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
+            Log.d(TAG, "Create a New Folder .");
+            extendFloatingButton();
+            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
+        }
+        if (v == activityHomeBinding.extflotingbuttonHomeImportfromgalary) {
+            Log.d(TAG, "Import from Gallery .");
+            extendFloatingButton();
+            openGallery();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.listview:
+                Toast.makeText(this, "View Change", Toast.LENGTH_SHORT).show();
+                activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
+                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
+                break;
+            case R.id.gridview:
+                Toast.makeText(this, "View Change", Toast.LENGTH_SHORT).show();
+                activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
+                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
+                break;
+
+            case R.id.save:
+                if (mArrayUri.size() != 0) {
+                    dialog.show();
+                } else {
+                    Toast.makeText(this, "Please Select Images", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            case R.id.share:
+                share();
+                break;
+
+//            case R.id.sortby:
+//                Toast.makeText(this, "Sort By", Toast.LENGTH_SHORT).show();
+//                break;
+//            case R.id.select:
+//                Toast.makeText(this, "Select", Toast.LENGTH_SHORT).show();
+//                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Log.d(TAG, "Navigation Item selected: " + item.toString());
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                startActivity(new Intent(ActivityHome.this, ActivityHome.class));
+                finish();
+                break;
+
+            case R.id.nav_setting:
+                startActivity(new Intent(ActivityHome.this, ActivitySetting.class));
+                break;
+
+            case R.id.nav_logout:
+                logout();
+                break;
+        }
+        return true;
+    }
+
+
+    private void initAleartDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityHome.this);
+        final View layout_filesaving = getLayoutInflater().inflate(R.layout.layout_file_saving, null);
+        builder.setView(layout_filesaving);
+        builder.setTitle("Set the File Name");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                editTextfilename = layout_filesaving.findViewById(R.id.edittext_layout_saving_fileName);
+                if (!editTextfilename.getText().toString().isEmpty()) {
+                    Log.d(TAG, "File Saving");
+                    dialog.cancel();
+                    createPDFWithMultipleImage(editTextfilename.getText().toString());
+                    Toast.makeText(ActivityHome.this, "File Saving", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.d(TAG, "Please Enter a File Name");
+                    Toast.makeText(ActivityHome.this, "Please Enter a File Name", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(ActivityHome.this, "File Saving Cancel", Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+            }
+        });
+
+        dialog = builder.create();
     }
 
     private void getDropboxIMGSize(Uri uri) {
@@ -148,9 +256,9 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
 
     void initNavAndToolbar() {
         setTitle(null);
-        setSupportActionBar(activityHomeBinding.toolbarActivityMain);
+        setSupportActionBar(activityHomeBinding.toolbarActivityHome);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, activityHomeBinding.drwerlayoutActivityMain,
-                activityHomeBinding.toolbarActivityMain,
+                activityHomeBinding.toolbarActivityHome,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         activityHomeBinding.drwerlayoutActivityMain.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
@@ -172,42 +280,30 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
             MenuBuilder menuBuilder = (MenuBuilder) menu;
             menuBuilder.setOptionalIconsVisible(true);
         }
+
         return true;
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v == activityHomeBinding.flotingbuttonHomeAdd) {
-            extendFloatingButton();
-        }
-        if (v == activityHomeBinding.extflotingbuttonTakeimage) {
-            Log.d(TAG, "Take Image .");
-            extendFloatingButton();
-            openGallery();
-
-        }
-        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
-            Log.d(TAG, "Create a New Folder .");
-            extendFloatingButton();
-            createPDFWithMultipleImage();
-        }
-        if (v == activityHomeBinding.extflotingbuttonHomeImportfromgalary) {
-            Log.d(TAG, "Import from Gallery .");
-            extendFloatingButton();
-            openGallery();
-        }
+    public void share() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        ApplicationInfo api = getApplicationContext().getApplicationInfo();
+        String apkpath = api.sourceDir;
+        /// intent.putExtra(Intent.EXTRA_TEXT, "apps address "))
+        intent.putExtra(Intent.EXTRA_TEXT, Uri.fromFile(new File(apkpath)));
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "Share with"));
     }
 
-    private void createPDFWithMultipleImage(){
-        File file = getOutputFile();
-        if (file != null){
+    private void createPDFWithMultipleImage(String filename) {
+        File file = getOutputFile(filename);
+        if (file != null) {
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 PdfDocument pdfDocument = new PdfDocument();
                 Log.d(TAG, "getOutputFile: try");
-                for (int i = 0; i < mArrayUri.size(); i++){
+                for (int i = 0; i < mArrayUri.size(); i++) {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mArrayUri.get(i));
-                   // Bitmap bitmap = BitmapFactory.decodeFile(mArrayUri.get(i).getPath());
+                    // Bitmap bitmap = BitmapFactory.decodeFile(mArrayUri.get(i).getPath());
                     PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), (i + 1)).create();
                     PdfDocument.Page page = pdfDocument.startPage(pageInfo);
                     Canvas canvas = page.getCanvas();
@@ -227,26 +323,25 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private File getOutputFile(){
-        File root = new File(this.getExternalFilesDir(null),"Fuad");
+    private File getOutputFile(String filename) {
+        File root = new File(this.getExternalFilesDir(null), "Fuad");
 
         boolean isFolderCreated = true;
 
-        if (!root.exists()){
+        if (!root.exists()) {
             Log.d(TAG, "getOutputFile: not exist");
             isFolderCreated = root.mkdir();
-        }else {
+        } else {
             Log.d(TAG, "getOutputFile:  exist");
         }
 
         if (isFolderCreated) {
             Log.d(TAG, "getOutputFile: created");
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            String imageFileName = "PDF_" + timeStamp;
+            String imageFileName = filename + "_" + timeStamp;
 
             return new File(root, imageFileName + ".pdf");
-        }
-        else {
+        } else {
             Toast.makeText(this, "Folder is not created", Toast.LENGTH_SHORT).show();
             return null;
         }
@@ -276,20 +371,22 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), image_rec_code);
     }
 
+
+    //logout current user
+    private void logout() {
+        Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, false);
+        FirebaseAuth.getInstance().signOut();
+        finish();
+    }
+
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Log.d(TAG, "Navigation Item selected: " + item.toString());
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                startActivity(new Intent(ActivityHome.this, ActivityHome.class));
-                finish();
-                break;
-            case R.id.nav_trash:
-                startActivity(new Intent(ActivityHome.this, ActivityTrash.class));
-                break;
-        }
-        activityHomeBinding.drwerlayoutActivityMain.closeDrawer(GravityCompat.START);
-        return true;
+    protected void onResume() {
+        super.onResume();
+        closeDrawer();
+    }
+
+    public void closeDrawer() {
+        activityHomeBinding.drwerlayoutActivityMain.closeDrawer(Gravity.LEFT, false);
     }
 
     @Override
@@ -307,19 +404,36 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                     Uri imageurl = data.getClipData().getItemAt(i).getUri();
                     mArrayUri.add(imageurl);
                 }
-                // setting 1st selected image into image switcher
-                activityHomeBinding.image.setImageURI(mArrayUri.get(0));
                 position = 0;
             } else {
                 Uri imageurl = data.getData();
                 mArrayUri.add(imageurl);
-                activityHomeBinding.image.setImageURI(mArrayUri.get(0));
                 position = 0;
             }
             adapterImageList.notifyDataSetChanged();
-        } else {
-            // show this if no image is selected
-            Toast.makeText(this, "You haven't picked Image", Toast.LENGTH_LONG).show();
         }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Log.d(TAG, "" + imageBitmap);
+        }
+//        else {
+//            // show this if no image is selected
+//            Toast.makeText(this, "You haven't picked Image", Toast.LENGTH_LONG).show();
+//        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (backpressed + 2000 > System.currentTimeMillis()) {
+            backtost.cancel();
+            super.onBackPressed();
+            return;
+        } else {
+            backtost = Toast.makeText(ActivityHome.this, "press BACK again to Exit", Toast.LENGTH_SHORT);
+            backtost.show();
+        }
+
+        backpressed = System.currentTimeMillis();
     }
 }

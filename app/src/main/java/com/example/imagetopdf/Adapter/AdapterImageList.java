@@ -35,7 +35,11 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.Imag
     @Override
     public void onBindViewHolder(@NonNull AdapterImageList.Imageviewholder holder, int position) {
         holder.imageview_choose.setImageURI(imagelist.get(position));
-        holder.textView_sl.setText("Sl." + (position + 1));
+        if (position > 9) {
+            holder.textView_sl.setText("" + (position + 1));
+        } else {
+            holder.textView_sl.setText("0" + (position + 1));
+        }
     }
 
     @Override
@@ -50,7 +54,7 @@ public class AdapterImageList extends RecyclerView.Adapter<AdapterImageList.Imag
         public Imageviewholder(@NonNull View itemView) {
             super(itemView);
             imageview_choose = itemView.findViewById(R.id.layout_image);
-            textView_sl = itemView.findViewById(R.id.layout_sl);
+            textView_sl = itemView.findViewById(R.id.textview_layout_sl);
         }
     }
 }
