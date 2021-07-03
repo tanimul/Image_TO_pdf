@@ -6,18 +6,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -58,6 +64,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOError;
@@ -77,7 +84,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
     private int image_rec_code = 1;
     Bitmap bitmap;
     ArrayList<Uri> mArrayUri;
-    Uri uri;
     int position = 0;
     private AdapterImageList adapterImageList;
     static final int REQUEST_IMAGE_CAPTURE = 0;
@@ -92,7 +98,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(activityHomeBinding.getRoot());
 
-        initHeader();
+ //       initHeader();
         initNavAndToolbar();
         initAnimation();
         initAleartDialog();
@@ -101,7 +107,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         mArrayUri = new ArrayList<Uri>();
 
         activityHomeBinding.recyclerviewImage.setFitsSystemWindows(true);
-        //  activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
         activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
 
         adapterImageList = new AdapterImageList(mArrayUri);
@@ -116,91 +121,28 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding.navViewActivityHome.setNavigationItemSelectedListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v == activityHomeBinding.flotingbuttonHomeAdd) {
-            extendFloatingButton();
-        }
-        if (v == activityHomeBinding.extflotingbuttonTakeimage) {
-            Log.d(TAG, "Take Image .");
-            extendFloatingButton();
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            try {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            } catch (ActivityNotFoundException e) {
-                // display error state to the user
-                Log.d(TAG, "display error state to the user");
-            }
-        }
-        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
-            Log.d(TAG, "Create a New Folder .");
-            extendFloatingButton();
-            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
-        }
-        if (v == activityHomeBinding.extflotingbuttonHomeImportfromgalary) {
-            Log.d(TAG, "Import from Gallery .");
-            extendFloatingButton();
-            openGallery();
-        }
+//    private void initHeader() {
+//        View header = activityHomeBinding.navViewActivityHome.getHeaderView(0);
+//        headerName = header.findViewById(R.id.header_name);
+//        headerName.setText(Tools.getPref(KEYS.USER_NAME, "User Name"));
+//    }
+
+    private void initNavAndToolbar() {
+        setTitle(null);
+        setSupportActionBar(activityHomeBinding.toolbarActivityHome);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, activityHomeBinding.drwerlayoutActivityMain,
+                activityHomeBinding.toolbarActivityHome,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        activityHomeBinding.drwerlayoutActivityMain.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.listview:
-                Toast.makeText(this, "View Change", Toast.LENGTH_SHORT).show();
-                activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
-                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
-                break;
-            case R.id.gridview:
-                Toast.makeText(this, "View Change", Toast.LENGTH_SHORT).show();
-                activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
-                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
-                break;
-
-            case R.id.save:
-                if (mArrayUri.size() != 0) {
-                    dialog.show();
-                } else {
-                    Toast.makeText(this, "Please Select Images", Toast.LENGTH_SHORT).show();
-                }
-
-                break;
-
-            case R.id.share:
-                share();
-                break;
-
-//            case R.id.sortby:
-//                Toast.makeText(this, "Sort By", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.select:
-//                Toast.makeText(this, "Select", Toast.LENGTH_SHORT).show();
-//                break;
-        }
-        return super.onOptionsItemSelected(item);
+    private void initAnimation() {
+        fav_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fav_open);
+        fav_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fav_close);
+        rotate_clockwise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
+        rotate_anticlockwise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_anticlockwise);
     }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Log.d(TAG, "Navigation Item selected: " + item.toString());
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                startActivity(new Intent(ActivityHome.this, ActivityHome.class));
-                finish();
-                break;
-
-            case R.id.nav_setting:
-                startActivity(new Intent(ActivityHome.this, ActivitySetting.class));
-                break;
-
-            case R.id.nav_logout:
-                logout();
-                break;
-        }
-        return true;
-    }
-
 
     private void initAleartDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ActivityHome.this);
@@ -236,41 +178,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         dialog = builder.create();
     }
 
-    private void getDropboxIMGSize(Uri uri) {
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-            int imageWidth = bitmap.getWidth();
-            int imageHeight = bitmap.getHeight();
-            Log.d(TAG, "check Information: h=" + imageHeight + " w=" + imageWidth);
-        } catch (Exception e) {
-            Log.d(TAG, "check Information: error:" + e.getMessage());
-        }
-
-    }
-
-    private void initHeader() {
-        View header = activityHomeBinding.navViewActivityHome.getHeaderView(0);
-        headerName = header.findViewById(R.id.header_name);
-        headerName.setText(Tools.getPref(KEYS.USER_NAME, "User Name"));
-    }
-
-    void initNavAndToolbar() {
-        setTitle(null);
-        setSupportActionBar(activityHomeBinding.toolbarActivityHome);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, activityHomeBinding.drwerlayoutActivityMain,
-                activityHomeBinding.toolbarActivityHome,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        activityHomeBinding.drwerlayoutActivityMain.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-    }
-
-    private void initAnimation() {
-        fav_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fav_open);
-        fav_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fav_close);
-        rotate_clockwise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_clockwise);
-        rotate_anticlockwise = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_anticlockwise);
-    }
-
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -282,6 +189,113 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.listview:
+                Toast.makeText(this, "List View", Toast.LENGTH_SHORT).show();
+                activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
+                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
+                break;
+            case R.id.gridview:
+                Toast.makeText(this, "Gridview", Toast.LENGTH_SHORT).show();
+                activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
+                activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
+                break;
+
+            case R.id.save:
+                if (mArrayUri.size() != 0) {
+                    dialog.show();
+                } else {
+                    Toast.makeText(this, "Please Select Images", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            case R.id.share:
+                share();
+                break;
+
+//            case R.id.sortby:
+//                Toast.makeText(this, "Sort By", Toast.LENGTH_SHORT).show();
+//                break;
+//            case R.id.select:
+//                Toast.makeText(this, "Select", Toast.LENGTH_SHORT).show();
+//                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == activityHomeBinding.flotingbuttonHomeAdd) {
+            extendFloatingButton();
+        }
+        if (v == activityHomeBinding.extflotingbuttonHomeImportfromgalary) {
+            Log.d(TAG, "Import from Gallery .");
+            extendFloatingButton();
+            openGallery();
+        }
+        if (v == activityHomeBinding.extflotingbuttonTakeimage) {
+            Log.d(TAG, "Take Image .");
+            extendFloatingButton();
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            try {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+// Else ask for permission
+                else {
+                    ActivityCompat.requestPermissions(this, new String[]
+                            {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+
+            } catch (ActivityNotFoundException e) {
+                // display error state to the user
+                Log.d(TAG, "display error state to the user");
+            }
+        }
+        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
+            Log.d(TAG, "Create a New Folder .");
+            extendFloatingButton();
+            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Log.d(TAG, "Navigation Item selected: " + item.toString());
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                startActivity(new Intent(ActivityHome.this, ActivityHome.class));
+                finish();
+                break;
+
+            case R.id.nav_setting:
+                startActivity(new Intent(ActivityHome.this, ActivitySetting.class));
+                break;
+
+//            case R.id.nav_logout:
+//                logout();
+//                break;
+        }
+        return true;
+    }
+
+    private void getDropboxIMGSize(Uri uri) {
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            int imageWidth = bitmap.getWidth();
+            int imageHeight = bitmap.getHeight();
+            Log.d(TAG, "check Information: h=" + imageHeight + " w=" + imageWidth);
+        } catch (Exception e) {
+            Log.d(TAG, "check Information: error:" + e.getMessage());
+        }
+
     }
 
     public void share() {
@@ -324,8 +338,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
     }
 
     private File getOutputFile(String filename) {
-        File root = new File(this.getExternalFilesDir(null), "Fuad");
-
+        File root = new File(Environment.getExternalStorageDirectory(), "Image TO Pdf");
         boolean isFolderCreated = true;
 
         if (!root.exists()) {
@@ -351,13 +364,13 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         if (isOpen) {
             activityHomeBinding.flotingbuttonHomeAdd.startAnimation(rotate_clockwise);
             activityHomeBinding.extflotingbuttonHomeImportfromgalary.startAnimation(fav_close);
-            activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_close);
+            //   activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_close);
             activityHomeBinding.extflotingbuttonTakeimage.startAnimation(fav_close);
             isOpen = false;
         } else {
             activityHomeBinding.flotingbuttonHomeAdd.startAnimation(rotate_anticlockwise);
             activityHomeBinding.extflotingbuttonHomeImportfromgalary.startAnimation(fav_open);
-            activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_open);
+            //   activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_open);
             activityHomeBinding.extflotingbuttonTakeimage.startAnimation(fav_open);
             isOpen = true;
         }
@@ -371,17 +384,17 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), image_rec_code);
     }
 
-
-    //logout current user
-    private void logout() {
-        Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, false);
-        FirebaseAuth.getInstance().signOut();
-        finish();
-    }
+//    //logout current user
+//    private void logout() {
+//        Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, false);
+//        FirebaseAuth.getInstance().signOut();
+//        finish();
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: ");
         closeDrawer();
     }
 
@@ -402,6 +415,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 for (int i = 0; i < cout; i++) {
                     // adding imageuri in array
                     Uri imageurl = data.getClipData().getItemAt(i).getUri();
+                    Log.d(TAG, "" + imageurl);
                     mArrayUri.add(imageurl);
                 }
                 position = 0;
@@ -412,15 +426,26 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
             }
             adapterImageList.notifyDataSetChanged();
         }
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            Log.d(TAG, "" + imageBitmap);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
+
+            Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+            // activityHomeBinding.imagetest.setImageBitmap(imageBitmap);
+            Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
+            Log.d(TAG, "Uri: " + tempUri);
+            mArrayUri.add(tempUri);
+            adapterImageList.notifyDataSetChanged();
         }
 //        else {
 //            // show this if no image is selected
 //            Toast.makeText(this, "You haven't picked Image", Toast.LENGTH_LONG).show();
 //        }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     @Override
@@ -436,4 +461,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
 
         backpressed = System.currentTimeMillis();
     }
+
+
 }

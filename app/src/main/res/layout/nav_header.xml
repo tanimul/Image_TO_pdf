@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:gravity="center"
-        android:text="User Name"
+        android:text="Image TO Pdf"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
