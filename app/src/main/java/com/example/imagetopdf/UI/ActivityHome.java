@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -69,6 +70,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOError;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,6 +93,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
     private Toast backtost;
     private AlertDialog dialog;
     private EditText editTextfilename;
+    private static final int MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +101,11 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(activityHomeBinding.getRoot());
 
- //       initHeader();
+        //       initHeader();
         initNavAndToolbar();
         initAnimation();
         initAleartDialog();
+        checkPermission();
 
 
         mArrayUri = new ArrayList<Uri>();
@@ -158,7 +162,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                     Log.d(TAG, "File Saving");
                     dialog.cancel();
                     createPDFWithMultipleImage(editTextfilename.getText().toString());
-                    Toast.makeText(ActivityHome.this, "File Saving", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "Please Enter a File Name");
                     Toast.makeText(ActivityHome.this, "Please Enter a File Name", Toast.LENGTH_SHORT).show();
@@ -214,9 +217,9 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
 
                 break;
 
-            case R.id.share:
-                share();
-                break;
+//            case R.id.share:
+//                share();
+//                break;
 
 //            case R.id.sortby:
 //                Toast.makeText(this, "Sort By", Toast.LENGTH_SHORT).show();
@@ -259,11 +262,11 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "display error state to the user");
             }
         }
-        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
-            Log.d(TAG, "Create a New Folder .");
-            extendFloatingButton();
-            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
-        }
+//        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
+//            Log.d(TAG, "Create a New Folder .");
+//            extendFloatingButton();
+//            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
@@ -298,14 +301,23 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void share() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        ApplicationInfo api = getApplicationContext().getApplicationInfo();
-        String apkpath = api.sourceDir;
-        /// intent.putExtra(Intent.EXTRA_TEXT, "apps address "))
-        intent.putExtra(Intent.EXTRA_TEXT, Uri.fromFile(new File(apkpath)));
-        intent.setType("text/plain");
-        startActivity(Intent.createChooser(intent, "Share with"));
+    public void share(File file) {
+        Log.d(TAG, "File: " + file);
+        Log.d(TAG, "File Name: " + file.getName());
+        Log.d(TAG, "File Path: " + file.getPath());
+        Uri sharingUri = Uri.parse(file.getPath());
+
+
+        Intent share = new Intent();
+        share.setAction(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, sharingUri);
+        startActivity(share);
+
+//        ShareCompat.IntentBuilder.from(this)
+//                .setStream(sharingUri)
+//                .setType(URLConnection.guessContentTypeFromName(file.getName()))
+//                .startChooser();
     }
 
     private void createPDFWithMultipleImage(String filename) {
@@ -330,8 +342,10 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 }
                 pdfDocument.writeTo(fileOutputStream);
                 pdfDocument.close();
-
+                Toast.makeText(ActivityHome.this, "File Saved", Toast.LENGTH_SHORT).show();
+                share(file);
             } catch (IOException e) {
+                Log.d(TAG, "IO Exception: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -462,5 +476,20 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         backpressed = System.currentTimeMillis();
     }
 
-
+    void checkPermission() {
+        if (ContextCompat.checkSelfPermission(ActivityHome.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(ActivityHome.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(ActivityHome.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+            }
+        }
+    }
 }
