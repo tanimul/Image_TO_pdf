@@ -5,40 +5,28 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/homes"
+            android:icon="@drawable/ic_home"
             android:title="Home" />
-
-        <!--        <item-->
-        <!--            android:id="@+id/nav_trash"-->
-        <!--            android:icon="@drawable/trash"-->
-        <!--            android:title="Trash" />-->
-
         <item
             android:id="@+id/nav_setting"
-            android:icon="@drawable/settings"
+            android:icon="@drawable/ic_settings"
             android:title="Setting" />
         <item
             android:id="@+id/nav_privacypolicy"
-            android:icon="@drawable/insurance"
+            android:icon="@drawable/ic_privacypolicy"
             android:title="Privacy Policy" />
 
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/information"
+            android:icon="@drawable/ic_help"
             android:title="Help" />
         <item
             android:id="@+id/nav_rate_me"
-            android:icon="@drawable/half_filled_rating_star"
+            android:icon="@drawable/ic_half_filled_rating_star"
             android:title="Rate me" />
         <item
             android:id="@+id/nav_share"
-            android:icon="@drawable/share_1"
+            android:icon="@drawable/ic_share"
             android:title="Share" />
-
-<!--        <item-->
-<!--            android:id="@+id/nav_logout"-->
-<!--            android:icon="@drawable/ic_power"-->
-<!--            android:title="Sign Out" />-->
-
     </group>
 </menu>

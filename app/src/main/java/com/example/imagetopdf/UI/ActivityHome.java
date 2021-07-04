@@ -1,18 +1,13 @@
 package com.example.imagetopdf.UI;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -23,17 +18,13 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -45,36 +36,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.example.imagetopdf.Adapter.AdapterImageList;
-import com.example.imagetopdf.App;
-import com.example.imagetopdf.KEYS;
 import com.example.imagetopdf.R;
-import com.example.imagetopdf.Tools;
 import com.example.imagetopdf.databinding.ActivityHomeBinding;
-import com.facebook.internal.LockOnGetVariable;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ActivityHome extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
@@ -121,7 +98,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding.flotingbuttonHomeAdd.setOnClickListener(this);
         activityHomeBinding.extflotingbuttonTakeimage.setOnClickListener(this);
         activityHomeBinding.extflotingbuttonHomeImportfromgalary.setOnClickListener(this);
-        activityHomeBinding.extflotingbuttonHomeNewfolder.setOnClickListener(this);
         activityHomeBinding.navViewActivityHome.setNavigationItemSelectedListener(this);
     }
 
@@ -262,11 +238,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "display error state to the user");
             }
         }
-//        if (v == activityHomeBinding.extflotingbuttonHomeNewfolder) {
-//            Log.d(TAG, "Create a New Folder .");
-//            extendFloatingButton();
-//            Toast.makeText(this, "Create a New Folder(UnderDeveloping) ", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
@@ -281,24 +252,8 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
             case R.id.nav_setting:
                 startActivity(new Intent(ActivityHome.this, ActivitySetting.class));
                 break;
-
-//            case R.id.nav_logout:
-//                logout();
-//                break;
         }
         return true;
-    }
-
-    private void getDropboxIMGSize(Uri uri) {
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-            int imageWidth = bitmap.getWidth();
-            int imageHeight = bitmap.getHeight();
-            Log.d(TAG, "check Information: h=" + imageHeight + " w=" + imageWidth);
-        } catch (Exception e) {
-            Log.d(TAG, "check Information: error:" + e.getMessage());
-        }
-
     }
 
     public void share(File file) {
@@ -307,17 +262,11 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "File Path: " + file.getPath());
         Uri sharingUri = Uri.parse(file.getPath());
 
-
         Intent share = new Intent();
         share.setAction(Intent.ACTION_SEND);
         share.setType("application/pdf");
         share.putExtra(Intent.EXTRA_STREAM, sharingUri);
         startActivity(share);
-
-//        ShareCompat.IntentBuilder.from(this)
-//                .setStream(sharingUri)
-//                .setType(URLConnection.guessContentTypeFromName(file.getName()))
-//                .startChooser();
     }
 
     private void createPDFWithMultipleImage(String filename) {
@@ -398,13 +347,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), image_rec_code);
     }
 
-//    //logout current user
-//    private void logout() {
-//        Tools.savePrefBoolean(KEYS.IS_LOGGED_IN, false);
-//        FirebaseAuth.getInstance().signOut();
-//        finish();
-//    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -449,10 +391,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
             mArrayUri.add(tempUri);
             adapterImageList.notifyDataSetChanged();
         }
-//        else {
-//            // show this if no image is selected
-//            Toast.makeText(this, "You haven't picked Image", Toast.LENGTH_LONG).show();
-//        }
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage) {

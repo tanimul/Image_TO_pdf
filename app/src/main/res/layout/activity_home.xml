@@ -55,7 +55,7 @@
             android:text="Take the Image"
             android:visibility="invisible"
             app:backgroundTint="@android:color/transparent"
-            app:icon="@drawable/camera"
+            app:icon="@drawable/ic_photo"
             app:iconGravity="end"
             app:layout_constraintBottom_toTopOf="@id/flotingbutton_home_add"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -73,29 +73,10 @@
             android:text="Import from Galary"
             android:visibility="invisible"
             app:backgroundTint="@android:color/transparent"
-            app:icon="@drawable/imports"
+            app:icon="@drawable/ic_import"
             app:iconGravity="end"
             app:layout_constraintBottom_toTopOf="@id/extflotingbutton_takeimage"
             app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/extflotingbutton_home_newfolder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="5dp"
-            android:background="@null"
-            android:outlineProvider="none"
-            android:text="Create new Folder"
-            android:visibility="gone"
-            app:backgroundTint="@android:color/transparent"
-            app:icon="@drawable/folder"
-            app:iconGravity="end"
-            app:layout_constraintBottom_toTopOf="@id/extflotingbutton_home_importfromgalary"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

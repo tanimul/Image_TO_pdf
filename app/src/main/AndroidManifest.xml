@@ -16,15 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ImageTOPdf">
-        <activity android:name=".UI.ActivityTrash"></activity>
         <activity android:name=".UI.ActivitySetting" />
-        <activity android:name=".UI.ActivityWelcome" />
-        <activity android:name=".UI.ActivityNewPassword" />
-        <activity android:name=".UI.ActivityForgotPassword" />
-        <activity android:name=".UI.ActivityLetsStart" />
-        <activity android:name=".UI.ActivityVerification" />
-        <activity android:name=".UI.ActivityLogin" />
-        <activity android:name=".UI.ActivitySignUp" />
         <activity android:name=".UI.ActivityHome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

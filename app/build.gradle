@@ -43,16 +43,6 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    implementation 'com.chaos.view:pinview:1.4.3'
-
-    implementation 'com.google.firebase:firebase-auth:21.0.1'
-    implementation 'com.google.firebase:firebase-database:20.0.0'
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
-
-    implementation 'io.andref:Rx.Network:1.0.1'
-
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
-
     //piccaso
     implementation 'com.squareup.picasso:picasso:2.71828'
 

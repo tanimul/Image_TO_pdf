@@ -3,36 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/gridview"
-        android:icon="@drawable/ic_menu_2"
+        android:icon="@drawable/ic_grid"
         android:title="Grid View" />
     <item
         android:id="@+id/listview"
         android:icon="@drawable/ic_list"
-        android:title="List View" />
-    <!--    <item-->
-    <!--        android:id="@+id/sortby"-->
-    <!--        android:icon="@drawable/ic_sort_by_attributes"-->
-    <!--        android:title="Sort by" />-->
-    <!--    <item-->
-    <!--        android:id="@+id/select"-->
-    <!--        android:icon="@drawable/ic_select"-->
-    <!--        android:title="Select" />-->
+        android:title="List View"/>
 
     <item
         android:id="@+id/save"
         android:icon="@drawable/ic_save"
         android:title="Save"
         app:showAsAction="always" />
-<!--    <item-->
-<!--        android:id="@+id/share"-->
-<!--        android:icon="@drawable/ic_share"-->
-<!--        android:title="Search"-->
-<!--        app:showAsAction="always" />-->
-
-    <!--    <item-->
-    <!--        android:id="@+id/search"-->
-    <!--        android:icon="@drawable/ic_search"-->
-    <!--        app:actionViewClass="androidx.appcompat.widget.SearchView"-->
-    <!--        app:showAsAction="always"-->
-    <!--        android:title="Search" />-->
 </menu>
