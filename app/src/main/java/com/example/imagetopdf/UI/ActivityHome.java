@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -41,7 +43,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.imagetopdf.Adapter.AdapterImageList;
+import com.example.imagetopdf.Interface.ImageOnClickListener;
+import com.example.imagetopdf.KEYS;
 import com.example.imagetopdf.R;
+import com.example.imagetopdf.Tools;
 import com.example.imagetopdf.databinding.ActivityHomeBinding;
 import com.google.android.material.navigation.NavigationView;
 
@@ -54,10 +59,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class ActivityHome extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class ActivityHome extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener, ImageOnClickListener {
     private static final String TAG = "ActivityHome";
     private ActivityHomeBinding activityHomeBinding;
-    private TextView headerName;
     Animation fav_open, fav_close, rotate_clockwise, rotate_anticlockwise;
     boolean isOpen = false;
     private int image_rec_code = 1;
@@ -78,11 +82,11 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(activityHomeBinding.getRoot());
 
-        //       initHeader();
         initNavAndToolbar();
         initAnimation();
         initAleartDialog();
         checkPermission();
+       // iniDayNightMode();
 
 
         mArrayUri = new ArrayList<Uri>();
@@ -90,7 +94,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding.recyclerviewImage.setFitsSystemWindows(true);
         activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
 
-        adapterImageList = new AdapterImageList(mArrayUri);
+        adapterImageList = new AdapterImageList(this, mArrayUri, this);
         activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
 
         activityHomeBinding.navViewActivityHome.getMenu().getItem(0).setChecked(true);
@@ -101,11 +105,15 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         activityHomeBinding.navViewActivityHome.setNavigationItemSelectedListener(this);
     }
 
-//    private void initHeader() {
-//        View header = activityHomeBinding.navViewActivityHome.getHeaderView(0);
-//        headerName = header.findViewById(R.id.header_name);
-//        headerName.setText(Tools.getPref(KEYS.USER_NAME, "User Name"));
-//    }
+    private void initDayNightMode() {
+        if (Tools.getPrefBoolean(KEYS.IsDartMode, false)) {
+            Log.d(TAG, "Dart Mode");
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            Log.d(TAG, "Day Mode");
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
 
     private void initNavAndToolbar() {
         setTitle(null);
@@ -174,12 +182,10 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.listview:
-                Toast.makeText(this, "List View", Toast.LENGTH_SHORT).show();
                 activityHomeBinding.recyclerviewImage.setLayoutManager(new LinearLayoutManager(this));
                 activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
                 break;
             case R.id.gridview:
-                Toast.makeText(this, "Gridview", Toast.LENGTH_SHORT).show();
                 activityHomeBinding.recyclerviewImage.setLayoutManager(new GridLayoutManager(this, 2));
                 activityHomeBinding.recyclerviewImage.setAdapter(adapterImageList);
                 break;
@@ -192,17 +198,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 }
 
                 break;
-
-//            case R.id.share:
-//                share();
-//                break;
-
-//            case R.id.sortby:
-//                Toast.makeText(this, "Sort By", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.select:
-//                Toast.makeText(this, "Select", Toast.LENGTH_SHORT).show();
-//                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -278,7 +273,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 Log.d(TAG, "getOutputFile: try");
                 for (int i = 0; i < mArrayUri.size(); i++) {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), mArrayUri.get(i));
-                    // Bitmap bitmap = BitmapFactory.decodeFile(mArrayUri.get(i).getPath());
                     PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), (i + 1)).create();
                     PdfDocument.Page page = pdfDocument.startPage(pageInfo);
                     Canvas canvas = page.getCanvas();
@@ -327,13 +321,11 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         if (isOpen) {
             activityHomeBinding.flotingbuttonHomeAdd.startAnimation(rotate_clockwise);
             activityHomeBinding.extflotingbuttonHomeImportfromgalary.startAnimation(fav_close);
-            //   activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_close);
             activityHomeBinding.extflotingbuttonTakeimage.startAnimation(fav_close);
             isOpen = false;
         } else {
             activityHomeBinding.flotingbuttonHomeAdd.startAnimation(rotate_anticlockwise);
             activityHomeBinding.extflotingbuttonHomeImportfromgalary.startAnimation(fav_open);
-            //   activityHomeBinding.extflotingbuttonHomeNewfolder.startAnimation(fav_open);
             activityHomeBinding.extflotingbuttonTakeimage.startAnimation(fav_open);
             isOpen = true;
         }
@@ -352,6 +344,7 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         Log.d(TAG, "onResume: ");
         closeDrawer();
+        initDayNightMode();
     }
 
     public void closeDrawer() {
@@ -370,8 +363,8 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                 int cout = data.getClipData().getItemCount();
                 for (int i = 0; i < cout; i++) {
                     // adding imageuri in array
-                    Uri imageurl = data.getClipData().getItemAt(i).getUri();
-                    Log.d(TAG, "" + imageurl);
+                    Uri imageurl = mClipData.getItemAt(i).getUri();
+                    Log.d(TAG, "Url: " + imageurl);
                     mArrayUri.add(imageurl);
                 }
                 position = 0;
@@ -385,7 +378,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
 
             Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
-            // activityHomeBinding.imagetest.setImageBitmap(imageBitmap);
             Uri tempUri = getImageUri(getApplicationContext(), imageBitmap);
             Log.d(TAG, "Uri: " + tempUri);
             mArrayUri.add(tempUri);
@@ -419,9 +411,6 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
             // Permission is not granted
             if (ActivityCompat.shouldShowRequestPermissionRationale(ActivityHome.this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(ActivityHome.this,
@@ -429,5 +418,12 @@ public class ActivityHome extends AppCompatActivity implements View.OnClickListe
                         MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE);
             }
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.d(TAG, "position delete: " + position);
+        mArrayUri.remove(position);
+        adapterImageList.notifyDataSetChanged();
     }
 }

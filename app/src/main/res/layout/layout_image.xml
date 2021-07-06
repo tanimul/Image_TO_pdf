@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:alpha="0.5"
+        android:layout_margin="1dp"
         android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imagebutton_home_trash"
+        android:id="@+id/imagebutton_layout_trash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
